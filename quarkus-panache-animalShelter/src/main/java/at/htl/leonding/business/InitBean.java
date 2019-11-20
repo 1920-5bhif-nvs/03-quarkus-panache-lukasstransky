@@ -15,8 +15,11 @@ import javax.transaction.Transactional;
 @ApplicationScoped
 public class InitBean {
 
+    /*@Inject
+    EntityManager em;*/
+
     @Inject
-    EntityManager em;
+    AnimalShelterPanacheRepository animalShelterPanacheRepository;
 
     @Transactional
     void init(@Observes StartupEvent ev){
@@ -55,8 +58,12 @@ public class InitBean {
         as3.addCage(c4);
         as3.addCage(c5);
 
-        em.persist(as1);
+        /*em.persist(as1);
         em.persist(as2);
-        em.persist(as3);
+        em.persist(as3);*/
+
+        animalShelterPanacheRepository.persistAndFlush(as1);
+        animalShelterPanacheRepository.persistAndFlush(as2);
+        animalShelterPanacheRepository.persistAndFlush(as3);
     }
 }
