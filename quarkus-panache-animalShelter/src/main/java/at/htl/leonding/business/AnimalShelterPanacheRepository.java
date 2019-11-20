@@ -10,9 +10,6 @@ import javax.transaction.Transactional;
 @ApplicationScoped
 public class AnimalShelterPanacheRepository implements PanacheRepository<AnimalShelter> {
 
-    @Inject
-    CagePanacheRepository cagePanacheRepository;
-
     @Transactional
     public AnimalShelter save(AnimalShelter animalShelter){
         this.persistAndFlush(animalShelter);

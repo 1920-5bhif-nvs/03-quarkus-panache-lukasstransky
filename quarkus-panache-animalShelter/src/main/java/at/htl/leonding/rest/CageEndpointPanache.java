@@ -12,9 +12,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
-@Path("cage")
+@Path("cage/panache")
 @Produces(MediaType.APPLICATION_JSON)
-public class CageEndpoint {
+public class CageEndpointPanache {
 
     @Inject
     CagePanacheRepository cagePanacheRepository;

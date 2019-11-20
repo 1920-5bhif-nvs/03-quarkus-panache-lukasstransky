@@ -14,10 +14,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
-//http://localhost:8080/animalShelter
-@Path("animalShelter")
+//http://localhost:8080/animalShelter/panache
+@Path("animalShelter/panache")
 @Produces(MediaType.APPLICATION_JSON)
-public class AnimalShelterEndpoint {
+public class AnimalShelterEndpointPanache {
 
     @Inject
     AnimalShelterPanacheRepository animalShelterPanacheRepository;
@@ -59,7 +59,7 @@ public class AnimalShelterEndpoint {
         }
     }
 
-    //http://localhost:8080/animalShelter?id=3
+    //http://localhost:8080/animalShelter/panache?id=3
     //{"post_code": 1234, "street": "Teststrasse 11", "town": "Luftenberg"}
     @PUT
     @Transactional
@@ -77,7 +77,7 @@ public class AnimalShelterEndpoint {
         }
     }
 
-    //http://localhost:8080/animalShelter?id=5
+    //http://localhost:8080/animalShelter/panache?id=5
     @DELETE
     @Transactional
     public Response deleteAnimalShelter(@QueryParam("id") long id) {
