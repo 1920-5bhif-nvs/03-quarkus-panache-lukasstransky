@@ -1,63 +1,92 @@
 package at.htl.leonding.rest;
 
+import at.htl.leonding.business.AnimalShelterPanacheRepository;
 import at.htl.leonding.model.AnimalShelter;
+import jdk.nashorn.internal.objects.annotations.Getter;
+import org.jboss.resteasy.annotations.Query;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
+//http://localhost:8080/animalShelter
 @Path("animalShelter")
+@Produces(MediaType.APPLICATION_JSON)
 public class AnimalShelterEndpoint {
 
     @Inject
-    EntityManager em;
+    AnimalShelterPanacheRepository animalShelterPanacheRepository;
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getShelters(){
-        TypedQuery<AnimalShelter> query = em.createNamedQuery("AnimalShelter.findAll", AnimalShelter.class);
-        List<AnimalShelter> shelters = query.getResultList();
-        return Response.ok().entity(shelters).build();
+    public Response getAllAnimalShelters(){
+        return Response.ok().entity(animalShelterPanacheRepository.listAll()).build();
     }
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("{id}")
-    public AnimalShelter getAnimalShelter(@PathParam("id") long id) {
-        return em.find(AnimalShelter.class, id);
+    @Path("count")
+    public long count(){
+        return animalShelterPanacheRepository.count();
     }
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/town/{town}")
-    public AnimalShelter getAnimalShelterByTown(@PathParam("town") String town) {
-        return em.createNamedQuery("AnimalShelter.findByTown", AnimalShelter.class).setParameter("town", town).getSingleResult();
+    @Path("id")
+    public Response getById(@QueryParam("id") Long id){
+        return Response.ok().entity(animalShelterPanacheRepository.findById(id)).build();
     }
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/postCode/{postCode}")
-    public AnimalShelter getAnimalShelterByPostCode(@PathParam("postCode") String postCode) {
-        return em.createNamedQuery("AnimalShelter.findByPostCode", AnimalShelter.class).setParameter("postCode", postCode).getSingleResult();
+    @Path("town")
+    public Response getByTown(@QueryParam("town") String town){
+        return Response.ok().entity(animalShelterPanacheRepository.findByTown(town)).build();
     }
 
+
+    //{"post_code": 2222, "street": "Teststraße 11", "town": "Luftenberg"}
     @POST
-    public Long putAnimalShelter(AnimalShelter animalShelter) {
-        em.persist(animalShelter);
-        return animalShelter.getId();
-    }
-
-    @DELETE
-    @Path("{id}")
-    public void deleteAnimalShelter(@PathParam("id") long id) {
-        AnimalShelter a = em.find(AnimalShelter.class, id);
-        if(a != null) {
-            em.remove(em.contains(a) ? a : em.merge(a));
+    @Transactional
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response save(AnimalShelter animalShelter) {
+        try{
+            animalShelter = animalShelterPanacheRepository.save(animalShelter);
+            return Response.ok().entity(animalShelter).build();
+        }catch(Exception ex){
+            return Response.serverError().build();
         }
     }
 
+    //http://localhost:8080/animalShelter?id=3
+    //{"post_code": 1234, "street": "Teststrasse 11", "town": "Luftenberg"}
+    @PUT
+    @Transactional
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response update(@QueryParam("id") Long id, AnimalShelter animalShelter){
+        try{
+            AnimalShelter toUpdate = animalShelterPanacheRepository.findById(id);
+            toUpdate.setPost_code(animalShelter.getPost_code());
+            toUpdate.setStreet(animalShelter.getStreet());
+            toUpdate.setTown(animalShelter.getTown());
+            animalShelter = animalShelterPanacheRepository.update(toUpdate);
+            return Response.ok().entity(animalShelter).build();
+        }catch(Exception ex){
+            return Response.serverError().build();
+        }
+    }
+
+    //http://localhost:8080/animalShelter?id=5
+    @DELETE
+    @Transactional
+    public Response deleteAnimalShelter(@QueryParam("id") long id) {
+        try{
+            AnimalShelter animalShelter = animalShelterPanacheRepository.findById(id);
+            animalShelterPanacheRepository.delete(animalShelter);
+            return Response.ok().entity(animalShelter).build();
+        }catch(Exception ex){
+            return Response.serverError().build();
+        }
+    }
 }
