@@ -1,0 +1,91 @@
+:imagesdir: images
+== Description
+This project is used to manage a animal shelter. A animal shelter contains several cages and in every cage there are various pets.
+
+== CLD
+image::CLD.png[]
+
+== ERD
+image::ERD.png[]
+
+== Use Cases
+=== 1.) create an animal shelter
+As an administrator, I would like to create a new animal shelter.
+
+==== REST
+`curl -X POST "http://localhost:8080/animalShelter/panache" -H "accept: application/json" -H "Content-Type: application/json" -d "{\"post_code\": 2222, \"street\": \"Teststraße 11\", \"town\": \"Luftenberg\"}"`
+
+=== 2.) query all cages
+As an administrator, I would like to query all cages.
+
+==== REST
+`curl -X GET "http://localhost:8080/cage/panache" -H "accept: application/json"` +
+
+=== 3.) delete an animal shelter
+As an administrator, I would like to delete an animal shelter.
+
+==== REST
+`curl -X DELETE "http://localhost:8080/animalShelter/panache?id=1" -H "accept: application/json"`
+
+== Database
+=== Dependency
+`<dependency>
+<groupId>io.quarkus</groupId>
+<artifactId>quarkus-jdbc-postgresql</artifactId>
+</dependency>`
+
+=== Creating/Starting of the Postgres database
+`docker run --name postgres-db -p 5432:5432 -e POSTGRES_PASSWORD=password -d postgres`
+
+=== Edit config file
+`quarkus.datasource.url=jdbc:postgresql://localhost/postgres
+quarkus.datasource.driver=org.postgresql.Driver
+quarkus.datasource.username=postgres
+quarkus.datasource.password=password
+quarkus.datasource.min-size=3
+quarkus.datasource.max-size=13
+quarkus.hibernate-orm.database.generation=drop-and-create`
+
+=== Adding the datasource
+
+[width=65%"]
+|=======
+|user |postgres
+|password |passme
+|=======
+
+image::datasource.PNG[]
+
+== Running
+=== DevMode
+`mvnw compile quarkus:dev`
+
+== Swagger
+=== Dependency
+`<dependency>
+<groupId>io.quarkus</groupId>
+<artifactId>quarkus-smallrye-openapi</artifactId>
+</dependency>` +
+
+=== User Interface
+`localhost:8080/swagger-ui`
+
+== Testing
+=== Dependency
+
+== Panache vs. Hibernate
+=== Benefits
+* you don’t have to write that much boilerplate code
+* easier for beginners
+* the possibility to use the DAO/Repository to better structure the code
+* the use of PanacheEntitiy if your project only uses some CRUD operations
+* there are a lot of easy, useful operations
+** e.g. `shelterRepository.listAll()`
+* it is also possible to construct complex JPQL-Queries
+** e.g. `shelterRepository.find("select s from AnimalShelter s")`
+
+=== Disadvantages
+* hardly any documentation or a large community available
+* if you face some specific problems, it is not so easy to fix them, because you won't find much solutions on the internet
+
+
