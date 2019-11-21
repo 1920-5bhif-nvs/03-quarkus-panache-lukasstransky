@@ -1,7 +1,9 @@
 :imagesdir: images
 :toc:
 == Description
-This project is used to manage a animal shelter. A animal shelter contains several cages and in every cage there are various pets.
+This project is used to manage an animal shelter. An animal shelter contains several cages and in every cage there are various pets.
+I have implemented https://github.com/1920-5bhif-nvs/03-quarkus-panache-lukasstransky/blob/master/quarkus-panache-animalShelter/src/main/java/at/htl/leonding/business/PetDao.java[PetDao] as we have always done. (Hibernate + DAO to seperate the code better) For https://github.com/1920-5bhif-nvs/03-quarkus-panache-lukasstransky/blob/master/quarkus-panache-animalShelter/src/main/java/at/htl/leonding/business/AnimalShelterPanacheRepository.java[AnimalShelterPanacheRepository]
+and https://github.com/1920-5bhif-nvs/03-quarkus-panache-lukasstransky/blob/master/quarkus-panache-animalShelter/src/main/java/at/htl/leonding/business/CagePanacheRepository.java[CagePanacheRepository], however, I used the Panache Repository.
 
 == CLD
 image::CLD.png[]
@@ -10,43 +12,50 @@ image::CLD.png[]
 image::ERD.png[]
 
 == Use Cases
-=== 1.) create an animal shelter
+=== 1.) get all cages for an animal shelter
+As an administrator, I would like to get all cages for an animal shelter.
+
+==== REST
+`curl -X GET "http://localhost:8080/cage/panache/shelter?id=1" -H "accept: application/json"`
+
+=== 2.) get all pets from a specific cage
+As an administrator, I would like to get all pets from a specific cage.
+
+==== REST
+`curl -X GET "http://localhost:8080/pet/hibernate/cage?id=1" -H "accept: application/json"`
+pet/hibernate
+
+=== 3.) get the animal shelter for a pet
+As an administrator, I would like to get the animal shelter for a pet.
+
+==== REST
+`curl -X GET "http://localhost:8080/shelter/panache/pet?id=1" -H "accept: application/json"`
+
+=== 4.) create an animal shelter
 As an administrator, I would like to create a new animal shelter.
 
 ==== REST
-`curl -X POST "http://localhost:8080/animalShelter/panache" -H "accept: application/json" +
- -H "Content-Type: application/json" -d "{\"post_code\": 2222, \"street\": \"Teststraße 11\", \"town\": \"Luftenberg\"}"`
-
-=== 2.) query all cages
-As an administrator, I would like to query all cages.
-
-==== REST
-`curl -X GET "http://localhost:8080/cage/panache" -H "accept: application/json"` +
-
-=== 3.) delete an animal shelter
-As an administrator, I would like to delete an animal shelter.
-
-==== REST
-`curl -X DELETE "http://localhost:8080/animalShelter/panache?id=1" -H "accept: application/json"`
+`curl -X POST "http://localhost:8080/animalShelter/panache" -H "accept: application/json"` +
+`-H "Content-Type: application/json" -d "{\"post_code\": 2222, \"street\": \"Teststraße 11\", \"town\": \"Luftenberg\"}"`
 
 == Database
 === Dependency
-`<dependency>
-<groupId>io.quarkus</groupId> +
-<artifactId>quarkus-jdbc-postgresql</artifactId> +
-</dependency>`
+`<dependency>` +
+`<groupId>io.quarkus</groupId>` +
+`<artifactId>quarkus-jdbc-postgresql</artifactId>` +
+`</dependency>`
 
-=== Creating/Starting of the Postgres database
+=== Creating/Starting the Postgres database
 `docker run --name postgres-db -p 5432:5432 -e POSTGRES_PASSWORD=password -d postgres`
 
 === Edit config file
-`quarkus.datasource.url=jdbc:postgresql://localhost/postgres +
-quarkus.datasource.driver=org.postgresql.Driver +
-quarkus.datasource.username=postgres +
-quarkus.datasource.password=password +
-quarkus.datasource.min-size=3 +
-quarkus.datasource.max-size=13 +
-quarkus.hibernate-orm.database.generation=drop-and-create`
+`quarkus.datasource.url=jdbc:postgresql://localhost/postgres` +
+`quarkus.datasource.driver=org.postgresql.Driver +
+`quarkus.datasource.username=postgres` +
+`quarkus.datasource.password=password` +
+`quarkus.datasource.min-size=3` +
+`quarkus.datasource.max-size=13` +
+`quarkus.hibernate-orm.database.generation=drop-and-create`
 
 === Adding the datasource
 
@@ -64,16 +73,41 @@ image::datasource.PNG[]
 
 == Swagger
 === Dependency
-`<dependency> +
-<groupId>io.quarkus</groupId> +
-<artifactId>quarkus-smallrye-openapi</artifactId> +
-</dependency>`
+`<dependency>` +
+`<groupId>io.quarkus</groupId>` +
+`<artifactId>quarkus-smallrye-openapi</artifactId>` +
+`</dependency>`
 
 === User Interface
 `localhost:8080/swagger-ui`
 
 == Testing
 === Dependency
+`<dependency>` +
+`<groupId>org.assertj</groupId>` +
+`<artifactId>assertj-db</artifactId>` +
+`<version>1.2.0</version>` +
+`<scope>test</scope>` +
+`</dependency>`
+
+=== Usage
+In this project, I used the https://joel-costigliola.github.io/assertj/assertj-db-concepts.html#table[AssertJ-DB] library. In order to perform Quarkus Unit-Tests, you only have to annotate the class with the annotation `@QuarkusTest` and the methods, as we are used to, with `@Test`.
+To test the database tables you need the appropriate data source, which can be injected with +
+`@Inject` +
+`DataSource dataSource;`
+
+In order to perform tests on a table you need to create a table object with your data source. +
+`Table animalShelter = new Table(this.dataSource, "animalshelter")`
+
+Test the type of a column (e.g. number, text): +
+ `assertThat(cage).column("id").isNumber(true);`
+
+Test if the values are correct in the table: +
+`assertThat(animalShelter).column("town").hasValues("Leonding", "Linz", "Wien")` +
+
+Test the amount of rows: +
+`assertThat(animalShelter).hasNumberOfRows(3)`
+
 
 == Panache vs. Hibernate
 === Benefits
