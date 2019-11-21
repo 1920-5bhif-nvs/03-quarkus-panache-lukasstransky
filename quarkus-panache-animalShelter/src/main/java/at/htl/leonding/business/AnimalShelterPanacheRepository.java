@@ -25,4 +25,8 @@ public class AnimalShelterPanacheRepository implements PanacheRepository<AnimalS
     public AnimalShelter findByTown(String town){
         return find("town", town).firstResult();
     }
+
+    public AnimalShelter findAnimalShelterFromPet(Long id){
+        return this.find("select a from AnimalShelter a join Cage c on c.animalShelter = a.id join Pet p on p.cage = c.id where p.id = ?1", id).firstResult();
+    }
 }

@@ -4,13 +4,10 @@ import at.htl.leonding.business.CagePanacheRepository;
 import at.htl.leonding.model.Cage;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
 @Path("cage/panache")
 @Produces(MediaType.APPLICATION_JSON)
@@ -43,15 +40,9 @@ public class CageEndpointPanache {
     }
 
     @GET
-    @Path("colminmax")
-    public Response getCagesWithColumnMinMax(@QueryParam("min") int min, @QueryParam("max") int max){
-        return Response.ok().entity(cagePanacheRepository.findCagesWithColumnMinMax(min, max)).build();
-    }
-
-    @GET
-    @Path("rowcol")
-    public Response getCagesWithRowColumn(@QueryParam("row") int row, @QueryParam("col") int column){
-        return Response.ok().entity(cagePanacheRepository.findCagesWithRowColumn(row, column)).build();
+    @Path("shelter")
+    public Response getAllCagesForSpecificAnimalShelter(@QueryParam("id") Long id){
+        return Response.ok().entity(cagePanacheRepository.findAllCagesForSpecificAnimalShelter(id)).build();
     }
 
     @POST
@@ -70,8 +61,8 @@ public class CageEndpointPanache {
     public Response update(@QueryParam("id") Long id, Cage cage){
         try{
             Cage toUpdate = cagePanacheRepository.findById(id);
-            toUpdate.setCage_column(cage.getCage_column());
-            toUpdate.setCage_row(cage.getCage_row());
+            toUpdate.setCageColumn(cage.getCageColumn());
+            toUpdate.setCageRow(cage.getCageRow());
             cage = cagePanacheRepository.update(toUpdate);
             return Response.ok().entity(cage).build();
         }catch(Exception ex){
@@ -83,9 +74,9 @@ public class CageEndpointPanache {
     @Transactional
     public Response delete(@QueryParam("id") long id) {
         try{
-            Cage animalShelter = cagePanacheRepository.findById(id);
-            cagePanacheRepository.delete(animalShelter);
-            return Response.ok().entity(animalShelter).build();
+            Cage cage = cagePanacheRepository.findById(id);
+            cagePanacheRepository.delete(cage);
+            return Response.ok().entity(cage).build();
         }catch(Exception ex){
             return Response.serverError().build();
         }

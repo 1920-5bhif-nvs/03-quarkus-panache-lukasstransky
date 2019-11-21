@@ -6,7 +6,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @XmlRootElement
 @Inheritance(strategy = InheritanceType.JOINED)
-@NamedQuery(name = "Pet.findAll", query = "select a from Pet a")
+@NamedQueries({
+    @NamedQuery(name = "Pet.findAll", query = "select p from Pet p"),
+    @NamedQuery(name = "Pet.getAllPetsByDiscriminator", query = "select p from Pet p where p.dType = :dtype")
+})
+@DiscriminatorColumn
 public abstract class Pet {
 
     @Id
@@ -17,6 +21,12 @@ public abstract class Pet {
     private double weight;
     private String name;
     private double price;
+
+    @Column(name = "DTYPE", insertable = false, updatable = false)
+    private String dType;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Cage cage;
 
     //region constructors
     public Pet() {
@@ -74,6 +84,14 @@ public abstract class Pet {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public Cage getCage() {
+        return cage;
+    }
+
+    public void setCage(Cage cage) {
+        this.cage = cage;
     }
     //endregion
 }

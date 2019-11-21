@@ -15,8 +15,8 @@ import javax.transaction.Transactional;
 @ApplicationScoped
 public class InitBean {
 
-    /*@Inject
-    EntityManager em;*/
+    @Inject
+    EntityManager em;
 
     @Inject
     AnimalShelterPanacheRepository animalShelterPanacheRepository;
@@ -44,26 +44,32 @@ public class InitBean {
         Cat cat2 = new Cat("Hauskatze", 8, 2.8, "Timmy", 200.0);
         Cat cat3 = new Cat("Hauskatze", 1, 4.0, "Lorenzo", 150.0);
 
-        c1.addPet(d1);
-        c1.addPet(d2);
-        c2.addPet(d3);
-        c3.addPet(cat1);
-        c3.addPet(cat2);
-        c4.addPet(d4);
-        c5.addPet(cat3);
+        d1.setCage(c1);
+        d2.setCage(c1);
+        d3.setCage(c2);
+        cat1.setCage(c3);
+        cat2.setCage(c3);
+        d4.setCage(c4);
+        cat3.setCage(c5);
 
-        as1.addCage(c1);
-        as1.addCage(c2);
-        as2.addCage(c3);
-        as3.addCage(c4);
-        as3.addCage(c5);
+        c1.setAnimalShelter(as1);
+        c2.setAnimalShelter(as1);
+        c3.setAnimalShelter(as2);
+        c4.setAnimalShelter(as3);
+        c5.setAnimalShelter(as3);
 
-        /*em.persist(as1);
-        em.persist(as2);
-        em.persist(as3);*/
+        em.persist(d1);
+        em.persist(d2);
+        em.persist(d3);
+        em.persist(cat1);
+        em.persist(cat2);
+        em.persist(d4);
+        em.persist(cat3);
 
-        animalShelterPanacheRepository.persistAndFlush(as1);
-        animalShelterPanacheRepository.persistAndFlush(as2);
-        animalShelterPanacheRepository.persistAndFlush(as3);
+        em.persist(c1);
+        em.persist(c2);
+        em.persist(c3);
+        em.persist(c4);
+        em.persist(c5);
     }
 }

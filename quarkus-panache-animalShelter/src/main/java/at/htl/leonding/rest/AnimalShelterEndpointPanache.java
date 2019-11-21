@@ -2,20 +2,15 @@ package at.htl.leonding.rest;
 
 import at.htl.leonding.business.AnimalShelterPanacheRepository;
 import at.htl.leonding.model.AnimalShelter;
-import jdk.nashorn.internal.objects.annotations.Getter;
-import org.jboss.resteasy.annotations.Query;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
-//http://localhost:8080/animalShelter/panache
-@Path("animalShelter/panache")
+//http://localhost:8080/shelter/panache
+@Path("shelter/panache")
 @Produces(MediaType.APPLICATION_JSON)
 public class AnimalShelterEndpointPanache {
 
@@ -45,6 +40,11 @@ public class AnimalShelterEndpointPanache {
         return Response.ok().entity(animalShelterPanacheRepository.findByTown(town)).build();
     }
 
+    @GET
+    @Path("pet")
+    public Response getAnimalShelterFromPet(@QueryParam("id") Long id){
+        return Response.ok().entity(animalShelterPanacheRepository.findAnimalShelterFromPet(id)).build();
+    }
 
     //{"post_code": 2222, "street": "Teststraße 11", "town": "Luftenberg"}
     @POST

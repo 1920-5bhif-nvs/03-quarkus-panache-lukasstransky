@@ -23,14 +23,10 @@ public class CagePanacheRepository implements PanacheRepository<Cage> {
     }
 
     public List<Cage> findCagesWithRowMinMax(int rowmin, int rowmax){
-        return this.find("cage_row >= ?1 and cage_row <= ?2", rowmin, rowmax).list();
+        return this.find("row >= ?1 and row <= ?2", rowmin, rowmax).list();
     }
 
-    public List<Cage> findCagesWithColumnMinMax(int columnmin, int columnmax){
-        return this.find("cage_column >= ?1 and cage_column <= ?2", columnmin, columnmax).list();
-    }
-
-    public List<Cage> findCagesWithRowColumn(int row, int column){
-        return this.find("cage_row = ?1 and cage_column = ?2", row, column).list();
+    public List<Cage> findAllCagesForSpecificAnimalShelter(Long id){
+        return this.find("animalshelter_id = ?1", id).list();
     }
 }

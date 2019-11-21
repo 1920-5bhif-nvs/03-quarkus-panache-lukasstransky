@@ -5,11 +5,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @XmlRootElement
-@NamedQueries({
-        @NamedQuery(name = "Dog.findAll", query = "select d from Dog d"),
-        @NamedQuery(name = "Dog.findByName", query = "select d from Dog d where d.name = :name"),
-        @NamedQuery(name = "Dog.findByAge", query = "select d from Dog d where d.age = :age")
-})
 public class Dog extends Pet {
 
     @Id
