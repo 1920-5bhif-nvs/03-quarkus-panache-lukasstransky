@@ -11,6 +11,22 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Pet.getAllPetsByDiscriminator", query = "select p from Pet p where p.dType = :dtype")
 })
 @DiscriminatorColumn
+@NamedEntityGraph(
+        name = "GraphTest",
+        attributeNodes = {
+                @NamedAttributeNode("breed"),
+                @NamedAttributeNode(value = "cage", subgraph = "cageGraph")
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = "cageGraph",
+                        attributeNodes = {
+                                @NamedAttributeNode("cageRow")
+                        }
+                )
+        }
+)
+@NamedEntityGraph(name = "GraphCage", attributeNodes = @NamedAttributeNode("cage"))
 public abstract class Pet {
 
     @Id

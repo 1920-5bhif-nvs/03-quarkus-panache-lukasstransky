@@ -1,11 +1,15 @@
 package at.htl.leonding.business;
 
 import at.htl.leonding.model.Cage;
+import at.htl.leonding.model.Dog;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.persistence.EntityGraph;
 import javax.transaction.Transactional;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @ApplicationScoped
 public class CagePanacheRepository implements PanacheRepository<Cage> {

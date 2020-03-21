@@ -30,4 +30,10 @@ public class PetEndpointHibernate {
     public Response findAllPetsFromCage(@QueryParam("id") Long id){
         return Response.ok().entity(petDao.getAllPetsFromCage(id)).build();
     }
+
+    @GET
+    @Path("graph")
+    public Response testGraph(){
+        return Response.ok().entity(petDao.testEntityGraph()).build();
+    }
 }
